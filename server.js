@@ -8,6 +8,7 @@ const server = app.listen(
 
 const tooBig = 'must not be more than 6 digits'
 const notNumber = 'must be a number'
+const notAnId = 'no number with such id'
 const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 var mapOfNumbers = new Map()
 var indexOfMap = 1
@@ -65,6 +66,84 @@ app.post('/:number', (req, res) => {
     indexOfMap++
 
     return res.status(200).send(input)
+
+})
+
+app.get('/getall', (req, res) => {
+
+    return res.status(200).send(JSON.stringify(Object.fromEntries(mapOfNumbers)));
+})
+
+app.get('/getbyid/:id', (req, res) => {
+
+    const inputid = req.params.id;
+
+    if(isItNumber(inputid) == false){
+
+        return res.status(200).send(notNumber);
+    }
+
+    const id = parseInt(inputid);
+
+    if(mapOfNumbers.has(id) == false){
+
+        return res.status(200).send(notAnId);
+    }
+
+    return res.status(200).send(mapOfNumbers.get(id) + '')
+
+})
+
+app.put('/:id/:number', (req, res) => {
+
+    const inputid = req.params.id
+
+    const inputnumber = req.params.number
+
+    if(isItNumber(inputid) == false || isItNumber(inputnumber) == false){
+
+        return res.status(200).send('id and number must be of type number !')
+    }
+
+    if(inputnumber.length > 6){
+
+        return res.status(200).send(tooBig)
+    }
+
+    const id = parseInt(inputid);
+
+    const number = parseInt(inputnumber)
+
+    if(mapOfNumbers.has(id) == false){
+
+        return res.status(200).send(notAnId)
+    }
+
+    mapOfNumbers.set(id, number);
+
+    return res.status(200).send('number with id : ' + id + ' set to ' + number);
+
+})
+
+app.delete('/:id', (req, res) => {
+
+    const inputid = req.params.id
+
+    if(isItNumber(inputid) == false){
+
+        return res.status(200).send(notNumber)
+    }
+
+    const id = parseInt(inputid)
+
+    if(mapOfNumbers.has(id) == false){
+
+        return res.status(200).send(notAnId)
+    }
+
+    mapOfNumbers.delete(id);
+
+    return res.status(200).send('number with id : ' + id + ' deleted')
 
 })
 
