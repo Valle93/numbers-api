@@ -1,5 +1,6 @@
 const app = require('express')();
 const port = process.env.PORT ||8080;
+const path = require('path');
 
 const server = app.listen(
     port,
@@ -15,7 +16,7 @@ var indexOfMap = 1
 
 app.get('/', (req, res) => {
 
-    res.status(200).send('hello user')
+    res.status(200).sendFile(path.join(__dirname) + "/views/index.html")
 })
 
 function isItDigit(char){
